@@ -35,8 +35,8 @@ let edges = [
     [6, 14], [7, 15]
 ];
 
-let angle = 0;
-let distance = 1.5;
+let angle = 1;
+let distance = 2;
 
 let scene;
 let camera;
@@ -47,7 +47,13 @@ let lines = [];
 
 function init(){
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+    camera = new THREE.OrthographicCamera(
+        window.innerWidth / - 300, window.innerWidth / 300,
+        window.innerHeight / -300, window.innerHeight / 300, 1, 1000);
+    camera.position.set(2, 2, 2);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+
     renderer = new THREE.WebGLRenderer();
 
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -55,10 +61,8 @@ function init(){
 
     material = new THREE.LineBasicMaterial({color: 0x0000ff});
 
-    camera.position.z = 8;
-
     //generate initial geometry
-    for(let i = 0; i < 2; i++){
+    for(let i = 0; i < edges.length; i++){
         let geometry = new THREE.Geometry();
         geometry.vertices.push(get3dProjection(vertices[edges[i][0]]));
         geometry.vertices.push(get3dProjection(vertices[edges[i][1]]));
@@ -74,10 +78,8 @@ function main(){
     function animate(){
         requestAnimationFrame(animate);
 
-        // angle += 5;
-        //
-        // rotate();
-        // updateGeometry();
+        rotate();
+        updateGeometry();
 
         renderer.render(scene, camera);
     }
@@ -89,20 +91,20 @@ function rotate(){
     let rotation = new THREE.Matrix4();
 
     //double rotation matrix in xy and zw planes
-    // rotation.set(
-    //     Math.cos(toRadians(angle)), -1 * Math.sin(toRadians(angle)), 0, 0,
-    //     Math.sin(toRadians(angle)), Math.cos(toRadians(angle)), 0, 0,
-    //     0, 0, Math.cos(toRadians(angle)), -1 * Math.sin(toRadians(angle)),
-    //     0, 0, Math.sin(toRadians(angle)), Math.cos(toRadians(angle))
-    // );
+    rotation.set(
+        Math.cos(toRadians(angle)), Math.sin(toRadians(angle)), 0, 0,
+        -1 * Math.sin(toRadians(angle)), Math.cos(toRadians(angle)), 0, 0,
+        0, 0, Math.cos(toRadians(angle)), Math.sin(toRadians(angle)),
+        0, 0, -1 * Math.sin(toRadians(angle)), Math.cos(toRadians(angle))
+    );
 
     //rotation matrix in the xy plane
-    rotation.set(
-        Math.cos(toRadians(angle)), -1 * Math.sin(toRadians(angle)), 0, 0,
-        Math.sin(toRadians(angle)), Math.cos(toRadians(angle)), 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-    );
+    // rotation.set(
+    //     Math.cos(toRadians(angle)), Math.sin(toRadians(angle)), 0, 0,
+    //     -1 * Math.sin(toRadians(angle)), Math.cos(toRadians(angle)), 0, 0,
+    //     0, 0, 1, 0,
+    //     0, 0, 0, 1
+    // );
 
     //rotation matrix in the zw plane
     // rotation.set(
@@ -122,29 +124,15 @@ function updateGeometry(){
     for(let i = 0; i < lines.length; i++){
         lines[i].geometry.vertices[0] = get3dProjection(vertices[edges[i][0]]);
         lines[i].geometry.vertices[1] = get3dProjection(vertices[edges[i][1]]);
-        // lines[i].rotation.x = 0;
-        // lines[i].rotation.y = 0;
-        // lines[i].rotation.z = 0;
         lines[i].geometry.verticesNeedUpdate = true;
     }
 }
 
 function get3dProjection(v){
 
-    //stereographic projection matrix
-    let projection = new THREE.Matrix4();
     let w = 1 / (distance - v.w);
 
-    projection.set(
-        w, 0, 0, 0,
-        0, w, 0, 0,
-        0, 0, w, 0,
-        0, 0, 0, 0
-    );
-
-    let result = v.applyMatrix4(projection);
-
-    return new THREE.Vector3(result.x, result.y, result.z);
+    return new THREE.Vector3(v.x * w , v.y * w, v.z * w);
 }
 
 function toRadians(angle){
