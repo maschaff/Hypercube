@@ -35,11 +35,13 @@ let edges = [
     [6, 14], [7, 15]
 ];
 
-let angle = 1;
 let distance = 2;
+
+let paused = true;
 
 let scene;
 let camera;
+
 let renderer;
 let material;
 
@@ -50,14 +52,17 @@ function init(){
 
     camera = new THREE.OrthographicCamera(
         window.innerWidth / - 300, window.innerWidth / 300,
-        window.innerHeight / -300, window.innerHeight / 300, 1, 1000);
-    camera.position.set(2, 2, 2);
+        window.innerHeight / - 300, window.innerHeight / 300, 1, 1000);
+
+    camera.position.copy(new THREE.Vector3(2, 2, 2));
+
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     renderer = new THREE.WebGLRenderer();
-
     renderer.setSize(window.innerWidth, window.innerHeight);
+
     document.body.appendChild(renderer.domElement);
+    window.onkeypress = handleKeyPress;
 
     material = new THREE.LineBasicMaterial({color: 0x0000ff});
 
@@ -78,41 +83,58 @@ function main(){
     function animate(){
         requestAnimationFrame(animate);
 
-        rotate();
-        updateGeometry();
+        if(!paused){
+            // rotateYZ(0.5);
+            rotateXY(0.5);
+            rotateZW(0.5);
+        }
 
+        updateGeometry();
         renderer.render(scene, camera);
     }
 
     animate();
 }
 
-function rotate(){
+function rotateYZ(angle){
     let rotation = new THREE.Matrix4();
 
-    //double rotation matrix in xy and zw planes
     rotation.set(
-        Math.cos(toRadians(angle)), Math.sin(toRadians(angle)), 0, 0,
-        -1 * Math.sin(toRadians(angle)), Math.cos(toRadians(angle)), 0, 0,
-        0, 0, Math.cos(toRadians(angle)), Math.sin(toRadians(angle)),
-        0, 0, -1 * Math.sin(toRadians(angle)), Math.cos(toRadians(angle))
+        1, 0, 0, 0,
+        0, Math.cos(rad(angle)), -Math.sin(rad(angle)), 0,
+        0, Math.sin(rad(angle)), Math.cos(rad(angle)), 0,
+        0, 0, 0, 1
     );
 
-    //rotation matrix in the xy plane
-    // rotation.set(
-    //     Math.cos(toRadians(angle)), Math.sin(toRadians(angle)), 0, 0,
-    //     -1 * Math.sin(toRadians(angle)), Math.cos(toRadians(angle)), 0, 0,
-    //     0, 0, 1, 0,
-    //     0, 0, 0, 1
-    // );
+    for(let i = 0; i < vertices.length; i++){
+        vertices[i] = vertices[i].applyMatrix4(rotation);
+    }
+}
 
-    //rotation matrix in the zw plane
-    // rotation.set(
-    //     1, 0, 0, 0,
-    //     0, 1, 0, 0,
-    //     0, 0, Math.cos(toRadians(angle)), -1 * Math.sin(toRadians(angle)),
-    //     0, 0, Math.sin(toRadians(angle)), Math.cos(toRadians(angle))
-    // );
+function rotateXY(angle){
+    let rotation = new THREE.Matrix4();
+
+    rotation.set(
+        Math.cos(rad(angle)), -Math.sin(rad(angle)), 0, 0,
+        Math.sin(rad(angle)), Math.cos(rad(angle)), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    );
+
+    for(let i = 0; i < vertices.length; i++){
+        vertices[i] = vertices[i].applyMatrix4(rotation);
+    }
+}
+
+function rotateZW(angle){
+    let rotation = new THREE.Matrix4();
+
+    rotation.set(
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, Math.cos(rad(angle)), -Math.sin(rad(angle)),
+        0, 0, Math.sin(rad(angle)), Math.cos(rad(angle))
+    );
 
     for(let i = 0; i < vertices.length; i++){
         vertices[i] = vertices[i].applyMatrix4(rotation);
@@ -135,6 +157,53 @@ function get3dProjection(v){
     return new THREE.Vector3(v.x * w , v.y * w, v.z * w);
 }
 
-function toRadians(angle){
+function handleKeyPress(event){
+    switch(getChar(event)){
+        case " ":
+            paused = !paused;
+            break;
+        case "j":
+            rotateXY(15);
+            break;
+        case "J":
+            rotateXY(-15);
+            break;
+        case "k":
+            rotateYZ(15);
+            break;
+        case "K":
+            rotateYZ(-15);
+            break;
+        case "l":
+            rotateZW(15);
+            break;
+        case "L":
+            rotateZW(-15);
+            break;
+        case "d":
+            distance += 0.2;
+            break;
+        case "D":
+            distance -= 0.2;
+            break;
+        default:
+            break;
+    }
+}
+
+// translate keypress events to strings
+// from http://javascript.info/tutorial/keyboard-events
+function getChar(event) {
+    if (event.which == null) {
+        return String.fromCharCode(event.keyCode) // IE
+    } else if (event.which!=0 && event.charCode!=0) {
+        return String.fromCharCode(event.which)   // the rest
+    } else {
+        return null // special key
+    }
+}
+
+//degrees to radians
+function rad(angle){
     return Math.PI * angle / 180;
 }
