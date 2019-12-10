@@ -367,7 +367,6 @@ function handleKeyPress(event){
 
         //reset current geometry
         case "h":
-            distance = 2;
             removeCurrentShape();
             addShape(shapes[currentShape][0], shapes[currentShape][1]);
             break;
