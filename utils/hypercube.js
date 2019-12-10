@@ -5,7 +5,7 @@ let shapes = [
     [dodecahedronVertices, dodecahedronEdges]
 ];
 
-let currentShape = 2;
+let currentShape = 0;
 
 let vertices = [];
 let edges = [];
