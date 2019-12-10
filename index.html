@@ -3,16 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <title>Hypercube</title>
-    <style>
-        html {overflow: hidden}
-        body {margin: 0}
-        canvas {width: 100%; height: 100%; overflow: hidden}
-    </style>
+    <link rel="stylesheet" href="utils/index.css">
 </head>
 <body>
+<div id="controls" class="textOverlay">
+    <h3>Controls</h3>
+    <ul>
+        <li>spacebar: pause/unpause rotation</li>
+        <li>f-F: change distance from light source</li>
+        <li>h: reset geometry</li>
+        <li>g: swap geometry</li>
+        <br>
+        <li><b>Autorotate (1 plane):</b></li>
+        <li>a-A: XY plane</li>
+        <li>s-S: YZ plane</li>
+        <li>d-D: XZ plane</li>
+        <li>q-Q: XW plane</li>
+        <li>w-W: YW plane</li>
+        <li>e-E: ZW plane</li>
+        <br>
+        <li><b>Autorotate (2 planes):</b></li>
+        <li>z: XY and ZW planes</li>
+        <li>Z: -XY and -ZW planes</li>
+        <li>x: -XY and ZW planes</li>
+        <li>X: XY and -ZW planes</li>
+        <li>c: YZ and XW planes</li>
+        <li>C: -YZ and -XW planes</li>
+        <li>v: -YZ and XW planes</li>
+        <li>V: YZ and -XW planes</li>
 
-<script src="./utils/three.js"></script>
-<script src="hypercube.js"></script>
+        <br>
+        <li><b>Manual Rotation:</b></li>
+        <li>j-J: XY plane</li>
+        <li>k-K: YZ plane</li>
+        <li>l-L: XZ plane</li>
+        <li>u-U: XW plane</li>
+        <li>i-I: YW plane</li>
+        <li>o-O: ZW plane</li>
+
+    </ul>
+</div>
+<div id="help" class="textOverlay">Toggle controls (p)</div>
+<script src="utils/three.js"></script>
+<script src="models/cube.js"></script>
+<script src="models/pyramid.js"></script>
+<script src="models/dodecahedron.js"></script>
+<script src="utils/hypercube.js"></script>
 <script>window.onload = main </script>
 </body>
 </html>
