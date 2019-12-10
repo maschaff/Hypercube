@@ -251,65 +251,85 @@ function handleKeyPress(event){
 
         //single rotations
         case "a":
+            paused = false;
             defaultRotation = "xy";
             break;
         case "A":
+            paused = false;
             defaultRotation = "-xy";
             break;
         case "s":
+            paused = false;
             defaultRotation = "yz";
             break;
         case "S":
+            paused = false;
             defaultRotation = "-yz";
             break;
         case "d":
+            paused = false;
             defaultRotation = "xz";
             break;
         case "D":
+            paused = false;
             defaultRotation = "-xz";
             break;
         case "q":
+            paused = false;
             defaultRotation = "xw";
             break;
         case "Q":
+            paused = false;
             defaultRotation = "-xw";
             break;
         case "w":
+            paused = false;
             defaultRotation = "yw";
             break;
         case "W":
+            paused = false;
             defaultRotation = "-yw";
             break;
         case "e":
+            paused = false;
             defaultRotation = "zw";
             break;
         case "E":
+            paused = false;
             defaultRotation = "-zw";
             break;
 
         //double rotations
         case "z":
+            paused = false;
             defaultRotation = "xy zw";
             break;
         case "Z":
+            paused = false;
             defaultRotation = "-xy -zw";
             break;
         case "x":
+            paused = false;
             defaultRotation = "-xy zw";
             break;
         case "X":
+            paused = false;
             defaultRotation = "xy -zw";
             break;
         case "c":
+            paused = false;
             defaultRotation = "yz xw";
             break;
         case "C":
+            paused = false;
             defaultRotation = "-yz -xw";
             break;
         case "v":
+            paused = false;
             defaultRotation = "-yz xw";
             break;
         case "V":
+            paused = false;
             defaultRotation = "yz -xw";
             break;
 
@@ -367,6 +387,7 @@ function handleKeyPress(event){
 
         //reset current geometry
         case "h":
+            paused = true;
             removeCurrentShape();
             addShape(shapes[currentShape][0], shapes[currentShape][1]);
             break;
