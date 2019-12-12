@@ -1,8 +1,8 @@
 //shapes stored in separate js files in models directory
 let shapes = [
-    [cubeVertices, cubeEdges],
-    [pyramidVertices, pyramidEdges],
-    [dodecahedronVertices, dodecahedronEdges]
+    shape(cubeVertices, cubeEdges, 1, -1),
+    shape(pyramidVertices, pyramidEdges, 1, -1),
+    shape(dodecahedronVertices, dodecahedronEdges, 1, -1)
 ];
 
 let currentShape = 0;
@@ -251,86 +251,66 @@ function handleKeyPress(event){
 
         //single rotations
         case "a":
-            paused = false;
-            defaultRotation = "xy";
+            setAutoRotation("xy");
             break;
         case "A":
-            paused = false;
-            defaultRotation = "-xy";
+            setAutoRotation("-xy");
             break;
         case "s":
-            paused = false;
-            defaultRotation = "yz";
+            setAutoRotation("yz");
             break;
         case "S":
-            paused = false;
-            defaultRotation = "-yz";
+            setAutoRotation("-yz");
             break;
         case "d":
-            paused = false;
-            defaultRotation = "xz";
+            setAutoRotation("xz");
             break;
         case "D":
-            paused = false;
-            defaultRotation = "-xz";
+            setAutoRotation("-xz");
             break;
         case "q":
-            paused = false;
-            defaultRotation = "xw";
+            setAutoRotation("xw");
             break;
         case "Q":
-            paused = false;
-            defaultRotation = "-xw";
+            setAutoRotation("-xw");
             break;
         case "w":
-            paused = false;
-            defaultRotation = "yw";
+            setAutoRotation("yw");
             break;
         case "W":
-            paused = false;
-            defaultRotation = "-yw";
+            setAutoRotation("-yw");
             break;
         case "e":
-            paused = false;
-            defaultRotation = "zw";
+            setAutoRotation("zw");
             break;
         case "E":
-            paused = false;
-            defaultRotation = "-zw";
+            setAutoRotation("-zw");
             break;
 
         //double rotations
         case "z":
-            paused = false;
-            defaultRotation = "xy zw";
+            setAutoRotation("xy zw");
             break;
         case "Z":
-            paused = false;
-            defaultRotation = "-xy -zw";
+            setAutoRotation("-xy -zw");
             break;
         case "x":
-            paused = false;
-            defaultRotation = "-xy zw";
+            setAutoRotation("-xy zw");
             break;
         case "X":
-            paused = false;
-            defaultRotation = "xy -zw";
+            setAutoRotation("xy -zw");
             break;
         case "c":
-            paused = false;
-            defaultRotation = "yz xw";
+            setAutoRotation("yz xw");
             break;
         case "C":
-            paused = false;
-            defaultRotation = "-yz -xw";
+            setAutoRotation("-yz -xw");
             break;
         case "v":
-            paused = false;
-            defaultRotation = "-yz xw";
+            setAutoRotation("-yz xw");
             break;
         case "V":
-            paused = false;
-            defaultRotation = "yz -xw";
+            setAutoRotation("yz -xw");
             break;
 
         //manual rotations
@@ -380,6 +360,7 @@ function handleKeyPress(event){
         //swap to next geometry
         case "g":
             distance = 2;
+            paused = true;
             removeCurrentShape();
             currentShape = (currentShape + 1) % shapes.length;
             addShape(shapes[currentShape][0], shapes[currentShape][1]);
@@ -428,6 +409,49 @@ function removeCurrentShape(){
     vertices = [];
     edges = [];
     lines = [];
+}
+
+function setAutoRotation(r){
+    paused = false;
+    defaultRotation = r;
+}
+
+function shape(v, e, w1, w2){
+    return [buildVertices(v, w1, w2), buildEdges(v, e)]
+}
+
+function buildVertices(v, w1, w2){
+    let arr = [];
+
+    for(let i = 0; i < v.length; i++){
+        arr.push(new THREE.Vector4(v[i][0], -v[i][1], v[i][2], w1))
+    }
+
+    for(let i = 0; i < v.length; i++){
+        arr.push(new THREE.Vector4(v[i][0], -v[i][1], v[i][2], w2))
+    }
+
+    return arr;
+}
+
+function buildEdges(v, e){
+    let numV = v.length;
+    let numE = e.length;
+    let arr = [];
+
+    for(let i = 0; i < e.length; i++){
+        arr.push(e[i]);
+    }
+
+    for(let i = 0; i < numE; i++){
+        arr.push([e[i][0] + numV, e[i][1] + numV]);
+    }
+
+    for(let i = 0; i < numV; i++){
+        arr.push([i, i + numV]);
+    }
+
+    return arr;
 }
 
 function toggleControls(){
